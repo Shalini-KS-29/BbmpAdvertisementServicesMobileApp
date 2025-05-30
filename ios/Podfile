@@ -5,6 +5,9 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+require_relative '../node_modules/react-native-permissions/scripts/setup.rb'
+
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -16,6 +19,9 @@ end
 
 target 'BbmpAdvertisementServicesMobileApp' do
   config = use_native_modules!
+
+   # ✅ Correct way to add iOS permission pods
+   setup_permissions(['Camera', 'PhotoLibrary','LocationWhenInUse'])
 
   use_react_native!(
     :path => config[:reactNativePath],
