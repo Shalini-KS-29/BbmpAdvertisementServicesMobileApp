@@ -29,7 +29,7 @@ export default StyleSheet.create({
     },
     selectedfilterHeadText: {
         fontSize: FontSize.H3,
-        fontWeight: '500',
+        fontWeight: '700',
         color: colors.white
     },
     filterCard: {

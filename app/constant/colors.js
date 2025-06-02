@@ -18,7 +18,8 @@ const colors = {
     lightPink: '#F8D5C1',
     headerTint: '#ffffff',
     arrowColor: "#fff",
-    lightBlue: '#7393B3'
+    lightBlue: '#7393B3',
+    blue: '#87cefa'
 
 };
 

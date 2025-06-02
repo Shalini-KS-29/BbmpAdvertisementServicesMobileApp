@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Button, FlatList, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Card } from 'react-native-paper';
 import styles from './homeStyle';
 import colors from '../../constant/colors';
@@ -11,6 +11,7 @@ import CaptureOrUploadImage from '../../components/uploadImage/uploadImage';
 import { useSelector } from 'react-redux';
 import AntIcon from 'react-native-vector-icons/FontAwesome5'
 import Octicons from 'react-native-vector-icons/Octicons'
+import ImageViewing from 'react-native-image-viewing';
 
 
 
@@ -23,6 +24,8 @@ const HomeScreen = (props) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const uploadSuccessResponse = useSelector((state) => state.inspectionDetails?.inspectionDetailsResponse)
 
+    const [visible, setVisible] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
     useEffect(() => {
         if (uploadSuccessResponse?.status == true) {
             setIsModalVisible(false);
@@ -31,6 +34,21 @@ const HomeScreen = (props) => {
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
+
+    const renderPhoto = ({ item }) => {
+        console.log("item", item)
+        return <Image
+            style={styles.bannerImage}
+            source={{ uri: item }} />
+
+    }
+
+    const openFullScreen = (index) => {
+        setCurrentIndex(index);
+        setVisible(true);
+    };
+    console.log("lis id", id)
+    console.log("listData?.photourl", listData?.photourl)
     return (
         <ScrollView style={{ flex: 1, marginBottom: 50 }}>
             <View style={styles.cardContainer}>
@@ -68,7 +86,7 @@ const HomeScreen = (props) => {
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>Location</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.location}</Text>
+                        <Text style={styles.value}>{listData?.address}</Text>
 
                     </View>
                     <View style={styles.rowContainer}>
@@ -118,12 +136,12 @@ const HomeScreen = (props) => {
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>Permission Date</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.permissionDate}</Text>
+                        <Text style={styles.value}>{listData?.agreementNoDate}</Text>
                     </View>
                     <View style={styles.rowContainer}>
-                        <Text style={styles.title}>Mode of Sights</Text>
+                        <Text style={styles.title}>Mode of Rights</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.modeOfSights}</Text>
+                        <Text style={styles.value}>{listData?.modeOfRights}</Text>
                     </View>
                 </Card>
             </View>
@@ -134,10 +152,15 @@ const HomeScreen = (props) => {
                         <View style={styles.iconStyle}>
                             <Icon name="cube" size={18} color={colors.primary} />
                         </View>
-                        <Text style={styles.headingText}>Package Information</Text>
+                        <Text style={styles.headingText}>Tendor Details</Text>
                     </View>
                     <View style={styles.rowContainer}>
-                        <Text style={styles.title}>Package Numbers</Text>
+                        <Text style={styles.title}>Tendor Number</Text>
+                        <Text style={styles.colon}>:</Text>
+                        <Text style={styles.value}>{listData?.packageNumbers}</Text>
+                    </View>
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.title}>Package Number</Text>
                         <Text style={styles.colon}>:</Text>
                         <Text style={styles.value}>{listData?.packageNumbers}</Text>
                     </View>
@@ -160,7 +183,7 @@ const HomeScreen = (props) => {
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>To</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.validityTo}</Text>
+                        <Text style={styles.value}>{listData?.validityPeriod}</Text>
                     </View>
                 </Card>
             </View>
@@ -176,12 +199,12 @@ const HomeScreen = (props) => {
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>Measurements</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.approvedMeasurements}</Text>
+                        <Text style={styles.value}>{listData?.ratePerSqMtrInRs}</Text>
                     </View>
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>No. of Approved Display Areas</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.displayAreas}</Text>
+                        <Text style={styles.value}>{listData?.displaySpaceInSqMtr}</Text>
                     </View>
                 </Card>
             </View>
@@ -192,12 +215,22 @@ const HomeScreen = (props) => {
                         <View style={styles.iconStyle}>
                             <Icon name="dollar" size={18} color={colors.primary} />
                         </View>
-                        <Text style={styles.headingText}>Financial Details</Text>
+                        <Text style={styles.headingText}>Payment Status</Text>
                     </View>
                     <View style={styles.rowContainer}>
-                        <Text style={styles.title}>Fee to be paid</Text>
+                        <Text style={styles.title}>Ground Rent</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.feeToBePaid}</Text>
+                        <Text style={styles.value}>{listData?.groundRentInRs}</Text>
+                    </View>
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.title}>Advance Fee</Text>
+                        <Text style={styles.colon}>:</Text>
+                        <Text style={styles.value}>{listData?.advanceFee ? listData?.advanceFee : 'NA'}</Text>
+                    </View>
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.title}>Penalty</Text>
+                        <Text style={styles.colon}>:</Text>
+                        <Text style={styles.value}>{listData?.penalty ? listData?.penalty : 'NA'}</Text>
                     </View>
                 </Card>
             </View>
@@ -213,15 +246,35 @@ const HomeScreen = (props) => {
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>Court Cases</Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={styles.value}>{listData?.courtCases}</Text>
+                        <Text style={styles.value}>{listData?.courtCase}</Text>
                     </View>
                 </Card>
             </View>
             <View style={styles.banner}>
                 <Text style={styles.headingText}>Advertisement Photo</Text>
-                <Image
-                    style={styles.bannerImage}
-                    source={{ uri: 'https://images.pexels.com/photos/1036657/pexels-photo-1036657.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' }} />
+                <FlatList
+                    data={listData?.photourl}
+                    // renderItem={renderPhoto}
+                    renderItem={({ item, index }) => (
+                        <TouchableOpacity onPress={() => openFullScreen(index)}>
+                            <Image
+                                style={styles.bannerImage}
+                                source={{ uri: item }} />
+
+
+                        </TouchableOpacity>
+                    )}
+                // keyExtractor={(item) => item.id.toString()}
+                // extraData={selectedId}
+                />
+
+                <ImageViewing
+                    images={listData?.photourl.map((p) => ({ uri: p }))}
+                    imageIndex={currentIndex}
+                    visible={visible}
+                    onRequestClose={() => setVisible(false)}
+                />
+
             </View>
 
             {/* <TouchableOpacity style={styles.imageContainer} onPress={CaptureOrUploadImage} activeOpacity={0.8}>
@@ -254,7 +307,10 @@ const HomeScreen = (props) => {
                             >
                                 <Icon name='close' size={20} color={colors.primary} />
                             </TouchableOpacity>
-                            <InspectionForm id={id} />
+                            <View style={{ maxWidth: '100%', }}>
+                                <InspectionForm id={id} />
+
+                            </View>
 
                             {/* <View style={{
                                 flexDirection: 'row',

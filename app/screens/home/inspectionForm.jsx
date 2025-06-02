@@ -12,6 +12,8 @@ import CaptureOrUploadImage from '../../components/uploadImage/uploadImage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getInspectionDetails } from '../../redux/slice/InspectionFormSlice';
 import Toast from 'react-native-toast-message';
+import DatePicker from 'react-native-date-picker';
+import CustomTextInputwithDatePicker from '../../components/customTextInputWithCalender/customTextinputWithCalender';
 
 const options = ['Yes', 'No'];
 
@@ -21,10 +23,13 @@ const InspectionForm = (props) => {
     const dispatch = useDispatch()
     const [selectMeasurement, setSelectMeasurement] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
-    const [comment, setComment] = useState(null)
+    const [comment, setComment] = useState(null);
+    const [measurement, setMeasurement] = useState(null)
     const [image, setImage] = useState(null);
     const [dropdown, setDropdown] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [date, setDate] = useState(new Date());
+    const [open, setOpen] = useState(false)
 
     const uploadSuccessResponse = useSelector((state) => state.inspectionDetails?.inspectionDetailsResponse)
 
@@ -60,7 +65,8 @@ const InspectionForm = (props) => {
             "structuralCondition": selectedOption,
             "regulation": dropdown,
             "comments": comment,
-            "file": image
+            "file": image,
+            "completionDate": date
         }
         setIsSubmitted(true);
         dispatch(getInspectionDetails(data))
@@ -77,18 +83,26 @@ const InspectionForm = (props) => {
 
     return (
         <View
-            style={{ marginTop: 5 }}>
+            style={{ marginTop: 5, }}>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name='clipboard' size={20} color={colors.primary} />
                 <Text style={styles.inspectionHeadText}>Inspection Form</Text>
             </View>
-
+            {/* <View style={{ maxWidth: '100%', backgroundColor: 'green' }}> */}
             <CaptureOrUploadImage handleImage={handleImage} />
-            <Text style={styles.formText}>Do the measurements match the approved specifications?</Text>
+
+            {/* </View> */}
+            <Text style={styles.formText}>Enter measurements match the approved specifications</Text>
             {/* <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}> */}
-            <View style={styles.radioContainer}>
-                {options.map((option, index) => (
+            {/* <View style={styles.radioContainer}> */}
+            <TextInput style={styles.commentInput}
+                value={measurement}
+                onChangeText={(val) => setMeasurement(val)}
+
+                placeholder='Enter measurements' />
+
+            {/* {options.map((option, index) => (
                     <TouchableOpacity
                         key={index}
                         style={styles.radioContainer}
@@ -99,10 +113,36 @@ const InspectionForm = (props) => {
                         </View>
                         <Text style={styles.label}>{option}</Text>
                     </TouchableOpacity>
-                ))}
-                {/* <Text style={styles.selected}>Selected: {selectedOption}</Text> */}
-            </View>
+                ))} */}
+            {/* <Text style={styles.selected}>Selected: {selectedOption}</Text> */}
             {/* </View> */}
+            {/* </View> */}
+
+            <View>
+                <Text style={styles.formText} >Completion Date </Text>
+                <CustomTextInputwithDatePicker
+                    style={{ height: 45 }}
+                    value={date.toLocaleDateString()}
+                    label="Document Registered Date"
+                    onPress={() => {
+                        console.log('Date picker opened');
+                        setOpen(true);
+                    }}
+                />
+
+                <DatePicker
+                    modal
+                    open={open}
+                    date={date}
+                    onConfirm={(date) => {
+                        setOpen(false)
+                        setDate(date)
+                    }}
+                    onCancel={() => setOpen(false)}
+                    mode="date"
+                    maximumDate={new Date()}
+                />
+            </View>
 
             <Text style={styles.formText} >Structural Condition</Text>
             {/* <Text style={styles.yesNo}>Yes</Text>

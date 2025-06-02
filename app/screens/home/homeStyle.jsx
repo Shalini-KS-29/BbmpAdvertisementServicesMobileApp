@@ -74,14 +74,17 @@ export default StyleSheet.create({
         width: '100%', // Adjust as needed
         height: 200, // Adjust as needed
         resizeMode: 'cover', // or 'contain', 'stretch', 'repeat', 'center'
+        padding: 5
     },
     modalContainer: {
         flex: 1,
+        maxWidth: '100%'
         // justifyContent: 'center',
         // alignItems: 'center',
     },
     centeredView: {
         flex: 1,
+        maxWidth: '100%',
         justifyContent: 'flex-end',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -110,7 +113,7 @@ export default StyleSheet.create({
         fontSize: FontSize.H3,
         fontWeight: '700',
         color: colors.primary,
-        margin: 5
+        marginVertical: 5
     },
     yesNo: {
         fontSize: FontSize.H3,
@@ -193,7 +196,14 @@ export default StyleSheet.create({
         color: colors.black,
         borderColor: colors.primary,
         padding: 5,
-    }
+    },
+    imageStyle: {
+        width: 80,
+        height: 80,
+        marginRight: 10,
+        position: 'static',
+        borderRadius: 8,
+    },
 
 
 })

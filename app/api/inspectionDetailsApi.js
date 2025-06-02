@@ -1,12 +1,28 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export const uploadInspectionData = async (data) => {
+    const latitude = await AsyncStorage.getItem('latitude')
+    const longitude = await AsyncStorage.getItem('longitude')
+
+    console.log("latttttlonggg", latitude, longitude)
 
     const formData = new FormData();
 
+    console.log("imageee sagaggg", data)
+
     // 1. Attach the image file
-    formData.append('file', {
-        uri: data?.file?.uri, // local file URI
-        name: data?.file?.fileName,
-        type: data?.file?.type,
+    // formData.append('file', {
+    //     uri: data?.file?.uri, // local file URI
+    //     name: data?.file?.fileName,
+    //     type: data?.file?.type,
+    // });
+
+    data?.file?.forEach((file, index) => {
+        formData.append('files', {
+            uri: file?.uri,
+            name: file?.fileName || `photo_${index}.jpg`,
+            type: file?.type || 'image/jpeg',
+        });
     });
 
     // 2. Attach the JSON data as a string
@@ -18,14 +34,29 @@ export const uploadInspectionData = async (data) => {
     };
 
 
+
     // formData.append('req', JSON.stringify(reqBody));
     formData.append('req', {
         string: JSON.stringify({
             advertisementId: data.id,
-            approvedSpecification: data.approvedSpecification,
+            approvedSpecification: 'yes',
             structuralCondition: data.structuralCondition,
             regulation: data.regulation,
             comments: data.comments,
+            latitude: latitude,
+            longitude: longitude,
+            completionDate: data.completionDate
+
+
+            // advertisementId: 1,
+            // approvedSpecification: "Yes",
+            // structuralCondition: "Fair",
+            // regulation: "No",
+            // comments: "Routine monitoring",
+            // latitude: latitude,
+            // longitude: longitude
+
+
         }),
         type: 'application/json',
         name: 'req.json',

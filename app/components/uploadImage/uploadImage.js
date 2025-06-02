@@ -1,179 +1,149 @@
-import React, { useEffect, useState } from 'react';
-import { Button, View, Image, Alert, Platform, Text, TouchableOpacity } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import { Platform as RNPlatform } from 'react-native';
-import CustomButton from '../../components/customButton/customButton';
-import styles from '../uploadImage/captureOrUploadImageStyle';
-import { useNavigation } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React, { useState } from 'react';
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+    FlatList,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import ImageViewing from 'react-native-image-viewing';
+import { launchImageLibrary } from 'react-native-image-picker';
 import colors from '../../constant/colors';
-
+import { FontSize } from '../../constant/fontSize';
 
 const CaptureOrUploadImage = (props) => {
     const { handleImage } = props;
+    const [photos, setPhotos] = useState([]); // array of images
+    const [visible, setVisible] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    handleImage(photos)
 
-    const navigation = useNavigation();
 
-    const [photo, setPhoto] = useState(null);
-
-    useEffect(() => {
-        if (photo) {
-            handleImage(photo)
-        }
-    }, [photo])
 
 
     const handleImageOption = () => {
-        Alert.alert(
-            'Select Image Source',
-            'Choose how you want to add the image',
-            [
-                {
-                    text: 'Capture Photo',
-                    onPress: handleTakePhoto,
-                },
-                {
-                    text: 'Upload from Library',
-                    onPress: handleChooseFromLibrary,
-                },
-                {
-                    text: 'Cancel',
-                    style: 'cancel',
-                },
-            ],
-            { cancelable: true }
+        launchImageLibrary(
+            {
+                mediaType: 'photo',
+                selectionLimit: 0, // for multiple images
+            },
+            (response) => {
+                if (!response.didCancel && !response.errorCode) {
+                    setPhotos(response.assets || []);
+                }
+            }
         );
     };
 
-
-    const requestPermission = async (type) => {
-        let permission;
-
-        if (type === 'camera') {
-            permission =
-                Platform.OS === 'android'
-                    ? PERMISSIONS.ANDROID.CAMERA
-                    : PERMISSIONS.IOS.CAMERA;
-        } else if (type === 'photo') {
-            if (Platform.OS === 'android') {
-                const androidVersion = RNPlatform.constants?.Release || '12';
-
-                if (parseInt(androidVersion, 10) >= 13) {
-                    permission = PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
-                } else {
-                    permission = PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-                }
-            } else if (Platform.OS === 'ios') {
-                const result = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
-                return result === RESULTS.GRANTED;
-            } else {
-                const result = await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
-                return result === RESULTS.GRANTED;
-            }
-        } else if (type === 'write') {
-            // Only needed for Android 12 and below
-            permission = PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE;
-        }
-
-        const result = await check(permission);
-
-        if (result === RESULTS.GRANTED) {
-            return true;
-        }
-
-        if (result === RESULTS.BLOCKED) {
-            Alert.alert(
-                'Permission Required',
-                'You have previously denied this permission. Please enable it from settings.',
-                [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Open Settings', onPress: () => openSettings() },
-                ]
-            );
-            return false;
-        }
-
-        const requestResult = await request(permission);
-        return requestResult === RESULTS.GRANTED;
+    const openFullScreen = (index) => {
+        setCurrentIndex(index);
+        setVisible(true);
     };
-
-
-    const handleTakePhoto = async () => {
-        const granted = await requestPermission('camera');
-        if (granted) {
-            launchCamera({ mediaType: 'photo' }, (response) => {
-                if (response.assets && !response.didCancel) {
-                    setPhoto(response.assets[0]);
-                }
-            });
-        } else {
-            Alert.alert('Permission Denied', 'Camera access is required to take photos.');
-        }
-    };
-
-
-    const handleChooseFromLibrary = async () => {
-        const granted = await requestPermission('photo');
-        if (granted) {
-            launchImageLibrary({ mediaType: 'photo' }, (response) => {
-                if (response.assets && !response.didCancel) {
-                    setPhoto(response.assets[0]);
-                }
-            });
-        } else {
-            Alert.alert('Permission Denied', 'Photo library access is required to upload images.');
-        }
-    };
-
-    const handleSave = () => {
-        Toast.show({
-            type: 'success',
-
-            text1: 'Image Saved',
-            text2: 'Image has been saved successfully',
-            position: 'bottom',
-            visibilityTime: 2000,
-            autoHide: true,
-        });
-        navigation.navigate('AuthenticateName')
-    }
-
+    console.log("photosss", photos)
     return (
         <View style={styles.container}>
-            {/* <Text style={styles.titleStyle}>Property Front Elevation Photo</Text>
-            <Text style={styles.textStyle}>Upload photo of front elevation of property (in case of Multi-Storey Flats - Upload photo of tower)</Text> */}
-
-            {/* <View style={styles.imageButton}>
-                <CustomButton width={'40%'} title="Click Photo" onPress={handleTakePhoto} />
-                <CustomButton title="Choose from Library" onPress={handleChooseFromLibrary} />
-
-            </View> */}
 
 
-
-
-            {photo ? (
+            {photos.length > 0 &&
                 <View style={styles.imageContainer}>
-                    <Image
-                        source={{ uri: photo.uri }}
-                        style={styles.imageStyle}
+                    <FlatList
+                        data={photos}
+                        keyExtractor={(item, index) => index.toString()}
+                        horizontal
+                        contentContainerStyle={{ paddingVertical: 3 }}
+                        renderItem={({ item, index }) => (
+                            <TouchableOpacity onPress={() => openFullScreen(index)}>
+                                <Image source={{ uri: item.uri }} style={styles.imageStyle} />
+                            </TouchableOpacity>
+                        )}
                     />
 
+                    <TouchableOpacity onPress={handleImageOption} activeOpacity={0.8}>
+                        <View style={styles.addMore}>
+                            <Icon name="camera" size={35} color={colors.primary} />
+                            {/* color="#007bff" */}
+                            <Text style={styles.addMoreText}>Add More</Text>
+                        </View>
+                    </TouchableOpacity>
+
                 </View>
-            ) : <TouchableOpacity onPress={handleImageOption} activeOpacity={0.8}>
+
+            }
+
+            {photos.length == [] && <TouchableOpacity onPress={handleImageOption} activeOpacity={0.8}>
                 <View style={styles.overlay}>
-                    <Icon name="camera" size={40} color={colors.primary} />
+                    <Icon name="camera" size={40} color="#007bff" />
                     <Text style={styles.text}>Tap to Upload or Capture Image</Text>
                 </View>
             </TouchableOpacity>}
 
-
-
-
+            <ImageViewing
+                images={photos.map((p) => ({ uri: p.uri }))}
+                imageIndex={currentIndex}
+                visible={visible}
+                onRequestClose={() => setVisible(false)}
+            />
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        height: 150,
+        // padding: 20,
+        width: '100%',
+        // margin: 10,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+
+    },
+    imageContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 3,
+        padding: 5,
+        // borderTopWidth: 5,
+        // borderBottomWidth: 5,
+        backgroundColor: colors.white,
+        borderColor: colors.primary,
+        maxWidth: '100%',
+        borderRadius: 10
+    },
+    overlay: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: colors.primary,
+        padding: 20,
+        width: '100%',
+        borderRadius: 10,
+    },
+    addMore: {
+        alignItems: 'center',
+        // justifyContent: 'center',
+        // borderWidth: 1,
+        // borderColor: '#ccc',
+        // padding: 20,
+        // borderRadius: 10,
+    },
+    text: { marginTop: 10, fontSize: 16 },
+    addMoreText: {
+        marginTop: 10,
+        fontSize: FontSize.H5,
+        color: colors.primary,
+        fontWeight: 'bold'
+    },
+    imageStyle: {
+        width: 80,
+        height: 80,
+        marginRight: 10,
+        position: 'static',
+        borderRadius: 4,
+        borderColor: colors.primary,
+        borderWidth: 2
+    },
+});
 
 export default CaptureOrUploadImage;

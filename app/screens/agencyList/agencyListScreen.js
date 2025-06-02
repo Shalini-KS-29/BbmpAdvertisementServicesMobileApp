@@ -47,8 +47,8 @@ const List = [
     },
 ];
 
-const filterList = [{ id: 1, type: "SKYWALK" },
-{ id: 2, type: "TOILETS" },
+const filterList = [{ id: 1, type: "Skywalk" },
+{ id: 2, type: "Public Toilets" },
 { id: 3, type: "BUS STOP" },
 ]
 
@@ -57,7 +57,7 @@ const AgencyListScreen = (props) => {
     const [selectedId, setSelectedId] = useState(null);
     const navigation = useNavigation();
     const [showFilter, setShowFilter] = useState(false);
-    const [showFilterItem, setShowFilterItem] = useState("SKYWALK");
+    const [showFilterItem, setShowFilterItem] = useState("Skywalk");
     const [filterSelectedId, setFilterSelectedId] = useState(null)
 
     const handlefilter = () => {
@@ -74,21 +74,22 @@ const AgencyListScreen = (props) => {
     }
 
     const renderItem = ({ item }) => {
+        console.log("itemmmmm", item)
         const isSelected = item.id === selectedId;
         return (
-            <View style={styles.cardContainer}>
+            <ScrollView style={styles.cardContainer}>
                 {showFilterItem == item.type && <Card
                     style={[styles.cardStyle, isSelected && styles.selectedCardStyle]}
                     onPress={() => handleSelectedItem(item)}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ margin: 10, width: '80%' }}>
                             <Text style={styles.headText}>{item.agencyName}</Text>
-                            <Text style={styles.addressText}>{item.location}</Text>
+                            <Text style={styles.addressText}>{item.address}</Text>
                         </View>
                         <Icon name="arrow-right" size={50} color={colors.primary} style={styles.icon} />
                     </View>
                 </Card>}
-            </View>
+            </ScrollView>
         );
     };
 
@@ -111,12 +112,13 @@ const AgencyListScreen = (props) => {
                             onPress={() => setShowFilterItem(item?.type)}>
                             <View style={styles.filterCard}>
                                 <Text style={[styles.filterHeadText,
-                                isSelected && styles.selectedFilterHeadText]}>{item?.type}</Text>
+                                isSelected && styles.selectedfilterHeadText]}>{item?.type}</Text>
                             </View>
                         </Card>
                     })}
                 </ScrollView>}
             <FlatList
+                // style={{ flex: 1 }}
                 data={agencyListData}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}

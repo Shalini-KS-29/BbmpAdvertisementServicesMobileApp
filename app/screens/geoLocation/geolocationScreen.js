@@ -40,9 +40,6 @@ const getCurrentLocation = async () => {
             AsyncStorage.setItem('longitude', long);
 
 
-            // AsyncStorage.setItem('Latitude', lat)
-            // AsyncStorage.setItem('Longitude', long)
-
         },
         (error) => {
             console.error(error.message);

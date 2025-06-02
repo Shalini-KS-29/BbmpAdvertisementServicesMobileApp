@@ -98,7 +98,9 @@ const LoginScreen = (props) => {
             AsyncStorage.setItem('mobileNumber', mobileNo)
 
 
-            navigation.navigate('AgencyList');
+            // navigation.navigate('AgencyList');
+            navigation.navigate('MainTabs', { screen: 'AgencyList' });
+
 
         } else if (verifyOtpResponse?.status === false) {
             Toast.show({
