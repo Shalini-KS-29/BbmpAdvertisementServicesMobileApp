@@ -8,6 +8,7 @@ import agencyListDetailsReducer from '../slice/AgencyListDetailsSlice';
 import agencyListReducer from '../slice/AgencyListSlice';
 import inspectionDetailsReducer from '../slice/InspectionFormSlice';
 import authReducer from '../slice/authSlice';
+import inspectionHistoryReducer from '../slice/inspectionHistortySlice';
 
 const createSagaMiddleware = require('redux-saga').default;
 const saga = require('redux-saga');
@@ -27,7 +28,8 @@ const store = configureStore({
     verifyOtp: verifyOtpReducer,
     agencyList: agencyListReducer,
     agencyDetails: agencyListDetailsReducer,
-    inspectionDetails: inspectionDetailsReducer
+    inspectionDetails: inspectionDetailsReducer,
+    inspectionHistory: inspectionHistoryReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

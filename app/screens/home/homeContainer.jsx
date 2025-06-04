@@ -19,7 +19,6 @@ const HomeContainer = (props) => {
         const longitude = '';
         latitude = await AsyncStorage.getItem('latitude');
         longitude = await AsyncStorage.getItem('longitude');
-        console.log("lat long", latitude, longitude)
     }
 
     const agencyDetails = useSelector((state) => state.agencyDetails?.agencyResponse);
@@ -27,7 +26,7 @@ const HomeContainer = (props) => {
 
     useEffect(() => {
         dispatch(getAgencyListDetails(id))
-    }, [])
+    }, [id])
 
     return (
         <HomeScreen listData={details} id={id}  {...props} />

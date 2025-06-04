@@ -9,8 +9,7 @@ const Device_Width = Dimensions.get('window').width;
 export default StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        // justifyContent: 'center'
+        marginBottom: '3%'
     },
     rowContainer: {
         flexDirection: 'row',
@@ -40,13 +39,10 @@ export default StyleSheet.create({
     },
     addressText: {
         fontSize: FontSize.H4,
-        // fontWeight: '300'
     },
     cardContainer: {
         flex: 1,
-        marginHorizontal: 8,
-        // flexDirection:'row'
-        // marginVertical: 5
+        marginHorizontal: 8
     },
     header: {
         flexDirection: 'row',
@@ -65,7 +61,6 @@ export default StyleSheet.create({
         fontSize: FontSize.H4,
         fontWeight: '600',
         width: '30%',
-        // color: colors.primary
     },
     colon: {
         fontSize: FontSize.H4,
@@ -77,7 +72,7 @@ export default StyleSheet.create({
         width: '60%'
     },
     cardStyle: {
-        marginVertical: 8,
+        margin: 8,
         padding: 10,
         borderWidth: 0.3,
         borderRadius: 5,
@@ -86,18 +81,15 @@ export default StyleSheet.create({
     filterCardStyle: {
         height: 40,
         marginVertical: 8,
-        // marginHorizontal: 2,
         marginLeft: 8,
         padding: 10,
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: colors.lightBlue,
-        // borderColor: colors.white,
     },
     selectedFilterCardStyle: {
         height: 40,
         marginVertical: 8,
-        // marginHorizontal: 2,
         marginLeft: 8,
         padding: 10,
         borderWidth: 1,
@@ -111,5 +103,31 @@ export default StyleSheet.create({
         borderWidth: 2,
         borderRadius: 5,
         borderColor: colors.primary
+    },
+    noDataText: {
+        textAlign: 'center',
+        fontSize: FontSize.H1,
+        fontWeight: 'bold',
+        color: colors.primary,
+        marginTop: 20,
+    },
+    agencyContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        margin: 15
+    },
+    selectAgencies: {
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    listContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    textList: {
+        margin: 10,
+        width: '80%'
     }
 })

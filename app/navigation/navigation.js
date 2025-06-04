@@ -15,15 +15,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import InspectionHistoryContainer from '../screens/inspectionHistory/inspectionHistoryContainer.js';
 import UserAccount from '../screens/userAccount/userAccountScreen.js';
 import UserAccountContainer from '../screens/userAccount/userAccountContainer.js';
-
-
-
-// import LoginContainer from '../screens/login/loginContainer';
-
-
-
-// const Stack = createNativeStackNavigator();
-// const Tab = createBottomTabNavigator();
+import { CommonActions } from '@react-navigation/native';
 
 
 const Stack = createNativeStackNavigator();
@@ -40,7 +32,7 @@ const BottomTabNavigator = () => (
             let iconName;
 
             if (route.name === 'AgencyList') {
-                iconName = 'list'; // home icon
+                iconName = 'home'; // home icon
             } else if (route.name === 'History') {
                 iconName = 'history'; // history icon
             } else if (route.name === 'User') {
@@ -60,8 +52,10 @@ const BottomTabNavigator = () => (
                 },
                 headerTintColor: 'white',
                 headerTitle: 'Advertisement Agency',
+
                 headerRight: () => (
                     <TouchableOpacity
+
                         onPress={() => {
                             Alert.alert(
                                 'Logout',
@@ -71,14 +65,20 @@ const BottomTabNavigator = () => (
                                     {
                                         text: 'Logout',
                                         style: 'destructive',
+                                        // ⬇️ inside headerRight
                                         onPress: async () => {
-                                            await AsyncStorage.removeItem('mobileNumber');
-                                            await AsyncStorage.removeItem('token');
-                                            navigation.reset({
-                                                index: 0,
-                                                routes: [{ name: 'MainTabs' }],
-                                            });
+                                            await AsyncStorage.multiRemove(['mobileNumber', 'token']);
 
+                                            // 2️⃣  climb up to the root (Stack) navigator
+                                            const root = navigation.getParent();   // Tab ➜ Stack
+                                            if (root) {
+                                                root.dispatch(
+                                                    CommonActions.reset({
+                                                        index: 0,
+                                                        routes: [{ name: 'Login' }],     // 3️⃣  point to the Login screen in the root stack
+                                                    })
+                                                );
+                                            }
                                         },
                                     },
                                 ],
@@ -138,7 +138,7 @@ const Navigator = () => {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName={'Login'}>
+            <Stack.Navigator initialRouteName={initialRoute}>
                 <Stack.Screen name="Login" component={LoginContainer} options={{ headerShown: false }} />
                 <Stack.Screen name="Otp" component={OtpContainer} options={{ headerShown: false }} />
                 <Tab.Screen
@@ -204,3 +204,40 @@ const Navigator = () => {
 
 
 export default Navigator;
+
+
+// ---------- 1. Bottom-tab navigator ----------
+// const Tab = createBottomTabNavigator();
+
+// function AppTabs() {
+//   return (
+//     <Tab.Navigator /* …icons & styling… */>
+//       <Tab.Screen name="AgencyList" component={AgencyListContainer} />
+//       <Tab.Screen name="History"     component={InspectionHistoryContainer} />
+//       <Tab.Screen name="User"        component={UserAccountContainer} />
+//     </Tab.Navigator>
+//   );
+// }
+
+// // ---------- 2. Auth stack ----------
+// const AuthStack = () => (
+//   <Stack.Navigator screenOptions={{ headerShown: false }}>
+//     <Stack.Screen name="Login" component={LoginContainer} />
+//     <Stack.Screen name="Otp"   component={OtpContainer}   />
+//   </Stack.Navigator>
+// );
+
+// // ---------- 3. Root ----------
+// export default function Navigator() {
+//   const [isSignedIn, setIsSignedIn] = React.useState(false);
+
+//   React.useEffect(() => {
+//     AsyncStorage.getItem('mobileNumber').then(val => setIsSignedIn(!!val));
+//   }, []);
+
+//   return (
+//     <NavigationContainer>
+//       {isSignedIn ? <AppTabs /> : <AuthStack />}
+//     </NavigationContainer>
+//   );
+// }

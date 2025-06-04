@@ -1,19 +1,17 @@
 import React, { use, useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import CustomTextInput from '../../components/customTextInput/customTextInput';
 import styles from './homeStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../constant/colors';
 import Dropdown from '../../components/customDropDown/dropdown';
 import CustomButton from '../../components/customButton/customButton';
-import RadioGroup from '../../components/customRadioButton/radioButton';
-import { RadioButton } from 'react-native-paper';
 import CaptureOrUploadImage from '../../components/uploadImage/uploadImage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getInspectionDetails } from '../../redux/slice/InspectionFormSlice';
 import Toast from 'react-native-toast-message';
 import DatePicker from 'react-native-date-picker';
 import CustomTextInputwithDatePicker from '../../components/customTextInputWithCalender/customTextinputWithCalender';
+import { getAgencyListDetails } from '../../redux/slice/AgencyListDetailsSlice';
 
 const options = ['Yes', 'No'];
 
@@ -45,6 +43,7 @@ const InspectionForm = (props) => {
                 visibilityTime: 4000,
                 autoHide: true,
             });
+            dispatch(getAgencyListDetails(id))
         } else if (uploadSuccessResponse?.status == false) {
             Toast.show({
                 type: 'error',
@@ -89,35 +88,13 @@ const InspectionForm = (props) => {
                 <Icon name='clipboard' size={20} color={colors.primary} />
                 <Text style={styles.inspectionHeadText}>Inspection Form</Text>
             </View>
-            {/* <View style={{ maxWidth: '100%', backgroundColor: 'green' }}> */}
             <CaptureOrUploadImage handleImage={handleImage} />
 
-            {/* </View> */}
             <Text style={styles.formText}>Enter measurements match the approved specifications</Text>
-            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}> */}
-            {/* <View style={styles.radioContainer}> */}
             <TextInput style={styles.commentInput}
                 value={measurement}
                 onChangeText={(val) => setMeasurement(val)}
-
                 placeholder='Enter measurements' />
-
-            {/* {options.map((option, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={styles.radioContainer}
-                        onPress={() => setSelectMeasurement(option)}
-                    >
-                        <View style={styles.outerCircle}>
-                            {selectMeasurement === option && <View style={styles.innerCircle} />}
-                        </View>
-                        <Text style={styles.label}>{option}</Text>
-                    </TouchableOpacity>
-                ))} */}
-            {/* <Text style={styles.selected}>Selected: {selectedOption}</Text> */}
-            {/* </View> */}
-            {/* </View> */}
-
             <View>
                 <Text style={styles.formText} >Completion Date </Text>
                 <CustomTextInputwithDatePicker
@@ -145,8 +122,6 @@ const InspectionForm = (props) => {
             </View>
 
             <Text style={styles.formText} >Structural Condition</Text>
-            {/* <Text style={styles.yesNo}>Yes</Text>
-                <Text style={styles.yesNo}>No</Text> */}
             <Dropdown dropDownValue={handleDropDown} />
 
             <Text style={styles.formText}>Does the content comply with regulations?</Text>
@@ -163,23 +138,16 @@ const InspectionForm = (props) => {
                         <Text style={styles.label}>{option}</Text>
                     </TouchableOpacity>
                 ))}
-                {/* <Text style={styles.selected}>Selected: {selectedOption}</Text> */}
             </View>
             <Text style={styles.formText}>Additional Comments</Text>
             <TextInput style={styles.commentInput}
                 value={comment}
                 onChangeText={(val) => setComment(val)}
-
                 placeholder='Enter any additional observations or concerns...' />
 
             <View style={{ width: 370, alignSelf: 'center', marginVertical: 20 }}>
                 <CustomButton title="SUBMIT INSPECTION" onPress={() => handleSubmit()} />
-
             </View>
-
-            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%' }}>
-                <CustomTextInput />
-            </View> */}
         </View>
     );
 };

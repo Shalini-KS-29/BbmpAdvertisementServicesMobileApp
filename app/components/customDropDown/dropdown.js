@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 const Dropdown = (props) => {
     const { dropDownValue } = props
@@ -8,7 +8,7 @@ const Dropdown = (props) => {
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
         { label: 'Good', value: 'Good' },
-        { label: 'Bad', value: 'Bad' },
+        { label: 'Dangerous/unsafe', value: 'Dangerous/unsafe' },
         { label: 'Average', value: 'Average' },
     ]);
 
@@ -17,7 +17,7 @@ const Dropdown = (props) => {
     }, [value])
 
     return (
-        <View style={styles.container}>
+        <View style={{}}>
             <DropDownPicker
                 open={open}
                 value={value}
@@ -32,18 +32,5 @@ const Dropdown = (props) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        // paddingHorizontal: 20,
-        // marginTop: 50,
-    },
-    dropdown: {
-        borderColor: '#ccc',
-    },
-    dropdownContainer: {
-        borderColor: '#ccc',
-    },
-});
 
 export default Dropdown;

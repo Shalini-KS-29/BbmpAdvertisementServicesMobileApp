@@ -1,54 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FlatList, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Card } from 'react-native-paper';
 import styles from './homeStyle';
 import colors from '../../constant/colors';
-// import Icon from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import InspectionForm from './inspectionForm';
 import CustomButton from '../../components/customButton/customButton';
-import CaptureOrUploadImage from '../../components/uploadImage/uploadImage';
 import { useSelector } from 'react-redux';
 import AntIcon from 'react-native-vector-icons/FontAwesome5'
 import Octicons from 'react-native-vector-icons/Octicons'
-import ImageViewing from 'react-native-image-viewing';
-
-
-
-
-
-
+import BannerSlider from '../../components/bannerSlider/bannerSlider';
 
 const HomeScreen = (props) => {
-    const { listData, agencyDetails, id } = props;
+    const { listData, id } = props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const uploadSuccessResponse = useSelector((state) => state.inspectionDetails?.inspectionDetailsResponse)
 
-    const [visible, setVisible] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(0);
     useEffect(() => {
         if (uploadSuccessResponse?.status == true) {
             setIsModalVisible(false);
         }
     }, [uploadSuccessResponse]);
+
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
 
-    const renderPhoto = ({ item }) => {
-        console.log("item", item)
-        return <Image
-            style={styles.bannerImage}
-            source={{ uri: item }} />
-
-    }
-
-    const openFullScreen = (index) => {
-        setCurrentIndex(index);
-        setVisible(true);
-    };
-    console.log("lis id", id)
-    console.log("listData?.photourl", listData?.photourl)
     return (
         <ScrollView style={{ flex: 1, marginBottom: 50 }}>
             <View style={styles.cardContainer}>
@@ -60,28 +37,15 @@ const HomeScreen = (props) => {
                     </View>
                     <View style={{ width: '30%' }}>
                         <CustomButton title="INSPECT" onPress={toggleModal} />
-
                     </View>
-
                 </View>
-                {/* <View style={{ width: 50, flexDirection: 'row' }}>
-                    <View style={{ margin: 10 }}>
-                        <Text style={styles.headText}>{listData?.agencyName}</Text>
-                        <Text style={styles.gstText}>GST : {listData?.gstNo}</Text>
-                    </View>
-                    <CustomButton title="INSPECTION FORM" onPress={toggleModal} />
-
-                </View> */}
-
 
                 <Card style={styles.cardStyle}>
                     <View style={styles.header}>
                         <View style={styles.iconStyle}>
                             <Icon name="building" size={18} color={colors.primary} />
-
                         </View>
                         <Text style={styles.headingText}>Location & Infrastructure</Text>
-
                     </View>
                     <View style={styles.rowContainer}>
                         <Text style={styles.title}>Location</Text>
@@ -252,80 +216,28 @@ const HomeScreen = (props) => {
             </View>
             <View style={styles.banner}>
                 <Text style={styles.headingText}>Advertisement Photo</Text>
-                <FlatList
-                    data={listData?.photourl}
-                    // renderItem={renderPhoto}
-                    renderItem={({ item, index }) => (
-                        <TouchableOpacity onPress={() => openFullScreen(index)}>
-                            <Image
-                                style={styles.bannerImage}
-                                source={{ uri: item }} />
-
-
-                        </TouchableOpacity>
-                    )}
-                // keyExtractor={(item) => item.id.toString()}
-                // extraData={selectedId}
-                />
-
-                <ImageViewing
-                    images={listData?.photourl.map((p) => ({ uri: p }))}
-                    imageIndex={currentIndex}
-                    visible={visible}
-                    onRequestClose={() => setVisible(false)}
-                />
-
+                <BannerSlider images={listData?.photourl} />
             </View>
-
-            {/* <TouchableOpacity style={styles.imageContainer} onPress={CaptureOrUploadImage} activeOpacity={0.8}>
-                <View style={styles.overlay}>
-                    <Icon name="camera" size={40} color="#fff" />
-                    <Text style={styles.text}>Tap to Upload or Capture Image</Text>
-                </View>
-            </TouchableOpacity> */}
-
-
-
             <View style={styles.modalContainer}>
-
-
                 <Modal
                     animationType="slide"
                     transparent={true}
                     visible={isModalVisible}
-                    onRequestClose={toggleModal}
-                >
+                    onRequestClose={toggleModal}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            {/* <TouchableOpacity style={{ alignItems: 'flex-end' }}>
-                                <Icon name="close" size={18} color={colors.primary} />
-
-                            </TouchableOpacity> */}
                             <TouchableOpacity
                                 style={styles.closeIconContainer}
-                                onPress={toggleModal}
-                            >
+                                onPress={toggleModal}>
                                 <Icon name='close' size={20} color={colors.primary} />
                             </TouchableOpacity>
                             <View style={{ maxWidth: '100%', }}>
-                                <InspectionForm id={id} />
-
+                                <InspectionForm id={id} completionDate={listData?.completionNoDate} />
                             </View>
-
-                            {/* <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'flex-start'
-                            }}>
-                                
-                                <Button title="Close Modal" onPress={toggleModal} />
-                            </View> */}
-
-
                         </View>
                     </View>
                 </Modal>
             </View>
-
         </ScrollView >
     );
 };

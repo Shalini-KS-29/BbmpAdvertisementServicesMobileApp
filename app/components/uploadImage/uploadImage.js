@@ -1,27 +1,22 @@
-import React, { useState } from 'react';
-import {
-    View,
-    Text,
-    Image,
-    TouchableOpacity,
-    StyleSheet,
-    FlatList,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 import ImageViewing from 'react-native-image-viewing';
 import { launchImageLibrary } from 'react-native-image-picker';
 import colors from '../../constant/colors';
-import { FontSize } from '../../constant/fontSize';
+import styles from './captureOrUploadImageStyle';
 
 const CaptureOrUploadImage = (props) => {
     const { handleImage } = props;
     const [photos, setPhotos] = useState([]); // array of images
     const [visible, setVisible] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-    handleImage(photos)
 
-
-
+    // notify parent when photos change
+    useEffect(() => {
+        handleImage(photos);
+    }, [photos, handleImage]);
 
     const handleImageOption = () => {
         launchImageLibrary(
@@ -30,8 +25,8 @@ const CaptureOrUploadImage = (props) => {
                 selectionLimit: 0, // for multiple images
             },
             (response) => {
-                if (!response.didCancel && !response.errorCode) {
-                    setPhotos(response.assets || []);
+                if (!response.didCancel && !response.errorCode && response.assets?.length) {
+                    setPhotos(prev => [...prev, ...response.assets]);   // ⬅️ keep the old ones!
                 }
             }
         );
@@ -41,11 +36,8 @@ const CaptureOrUploadImage = (props) => {
         setCurrentIndex(index);
         setVisible(true);
     };
-    console.log("photosss", photos)
     return (
         <View style={styles.container}>
-
-
             {photos.length > 0 &&
                 <View style={styles.imageContainer}>
                     <FlatList
@@ -54,22 +46,35 @@ const CaptureOrUploadImage = (props) => {
                         horizontal
                         contentContainerStyle={{ paddingVertical: 3 }}
                         renderItem={({ item, index }) => (
-                            <TouchableOpacity onPress={() => openFullScreen(index)}>
-                                <Image source={{ uri: item.uri }} style={styles.imageStyle} />
-                            </TouchableOpacity>
-                        )}
-                    />
+                            <View style={styles.imageWrapper}>
+                                {/* Delete Icon inside top-right of image */}
+                                <TouchableOpacity
+                                    style={styles.deleteIcon}
+                                    onPress={() => {
+                                        setPhotos((prev) => prev.filter((_, i) => i !== index));
+                                    }}>
+                                    <Entypo name="cross" size={18} color="white" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => openFullScreen(index)}>
+
+                                    <Image source={{ uri: item.uri }} style={styles.imageStyle} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.deleteIcon}
+                                    onPress={() => {
+                                        setPhotos((prev) => prev.filter((_, i) => i !== index));
+                                    }}>
+                                </TouchableOpacity>
+                            </View>
+                        )} />
 
                     <TouchableOpacity onPress={handleImageOption} activeOpacity={0.8}>
                         <View style={styles.addMore}>
                             <Icon name="camera" size={35} color={colors.primary} />
-                            {/* color="#007bff" */}
                             <Text style={styles.addMoreText}>Add More</Text>
                         </View>
                     </TouchableOpacity>
-
                 </View>
-
             }
 
             {photos.length == [] && <TouchableOpacity onPress={handleImageOption} activeOpacity={0.8}>
@@ -89,61 +94,6 @@ const CaptureOrUploadImage = (props) => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        height: 150,
-        // padding: 20,
-        width: '100%',
-        // margin: 10,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
 
-    },
-    imageContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 3,
-        padding: 5,
-        // borderTopWidth: 5,
-        // borderBottomWidth: 5,
-        backgroundColor: colors.white,
-        borderColor: colors.primary,
-        maxWidth: '100%',
-        borderRadius: 10
-    },
-    overlay: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: colors.primary,
-        padding: 20,
-        width: '100%',
-        borderRadius: 10,
-    },
-    addMore: {
-        alignItems: 'center',
-        // justifyContent: 'center',
-        // borderWidth: 1,
-        // borderColor: '#ccc',
-        // padding: 20,
-        // borderRadius: 10,
-    },
-    text: { marginTop: 10, fontSize: 16 },
-    addMoreText: {
-        marginTop: 10,
-        fontSize: FontSize.H5,
-        color: colors.primary,
-        fontWeight: 'bold'
-    },
-    imageStyle: {
-        width: 80,
-        height: 80,
-        marginRight: 10,
-        position: 'static',
-        borderRadius: 4,
-        borderColor: colors.primary,
-        borderWidth: 2
-    },
-});
 
 export default CaptureOrUploadImage;

@@ -4,63 +4,57 @@ import { FontSize } from "../../constant/fontSize";
 
 export default StyleSheet.create({
     container: {
-        // flex: 1
-    },
-    imageButton: {
-        flexDirection: 'row',
-        margin: 20,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-
-    },
-    titleStyle: {
-        fontSize: FontSize.H1,
-        fontWeight: '800',
-        color: colors.textSecondary,
-        textAlign: 'center',
-        margin: 20
-    },
-    textStyle: {
-        fontSize: FontSize.H5,
-        fontWeight: '800',
-        color: colors.orange,
-        textAlign: 'center',
-        margin: 20,
-    },
-    buttonWrapper: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        margin: 15,
-    },
-    imageStyle: {
+        height: 150,
         width: '100%',
-        height: '100%',
-        // padding: 2,
-        // padding: 20,
-        borderRadius: 5,
-        // margin: 10
-    },
-    overlay: {
+        backgroundColor: '#fff',
         justifyContent: 'center',
-        alignItems: 'center',
-        // backgroundColor: 'grey',
-        borderWidth: 2,
-        borderColor: colors.primary,
-        padding: 20,
-        borderRadius: 12,
-        marginVertical: 8
-    },
-    text: {
-        marginTop: 10,
-        color: colors.primary,
-        fontSize: 14,
     },
     imageContainer: {
-        margin: 2,
-        height: 200,
-        // borderRadius: 2
-        // width: 200
-
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 3,
+        padding: 5,
+        backgroundColor: colors.white,
+        borderColor: colors.primary,
+        maxWidth: '100%',
+        borderRadius: 10
+    },
+    overlay: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: colors.primary,
+        padding: 20,
+        width: '100%',
+        borderRadius: 10,
+    },
+    addMore: {
+        alignItems: 'center'
+    },
+    text: { marginTop: 10, fontSize: 16 },
+    addMoreText: {
+        marginTop: 10,
+        fontSize: FontSize.H5,
+        color: colors.primary,
+        fontWeight: 'bold'
+    },
+    imageWrapper: {
+        position: 'relative',
+        marginRight: 10,
+    },
+    imageStyle: {
+        width: 80,
+        height: 80,
+        borderRadius: 4,
+        borderColor: colors.primary,
+        borderWidth: 2,
+    },
+    deleteIcon: {
+        position: 'absolute',
+        top: -4,
+        right: -4,
+        backgroundColor: 'red',
+        borderRadius: 12,
+        zIndex: 2,
     }
-
 })
