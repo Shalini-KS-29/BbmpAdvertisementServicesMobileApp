@@ -19,7 +19,8 @@ const colors = {
     headerTint: '#ffffff',
     arrowColor: "#fff",
     lightBlue: '#7393B3',
-    blue: '#87cefa'
+    blue: '#87cefa',
+    historyBackground: '#D8E2DC'
 
 };
 

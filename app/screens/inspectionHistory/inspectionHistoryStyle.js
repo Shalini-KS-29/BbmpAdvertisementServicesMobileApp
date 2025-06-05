@@ -27,7 +27,7 @@ export default StyleSheet.create({
         // borderTopWidth: 2,
         // borderBottomWidth: 2,
 
-        backgroundColor: '#D8E2DC'
+        backgroundColor: colors.historyBackground
         // backgroundColor: '#ADB5B0'
         // backgroundColor: '#FAD5EB'
         // backgroundColor: '#E5E4E2'
